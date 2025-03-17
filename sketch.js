@@ -8,8 +8,6 @@ let blobdata = []; // Opbevarer blob data
 let i;
 let u;
 
- 
-
 
 function setup() {
   createCanvas(600, 600); // Canvas størrelse
@@ -36,13 +34,11 @@ function setup() {
       color: {
         r: random(0, 255), 
         g: random(0, 255), 
-        b: random(0, 255)
+        b: random(0, 255),
       }
-      
     };
     blobdata.push(newblob);
   }
-
 }
 
 function BlobG() {
@@ -50,7 +46,6 @@ function BlobG() {
   for (let i = 0; i < blobdata.length; i++) {
     fill(blobdata[i].color.r, blobdata[i].color.b, blobdata[i].color.g);
     ellipse(blobdata[i].x, blobdata[i].y, blobdata[i].r);
-
   }
 }
 
@@ -106,14 +101,16 @@ function PIL() { // Kontrol af spiller 2
 }
 
 
-function SpisB(){
-  if (dist(pos1.x, pos1.y,i,u) < 15)  {
-      textSize(30);
-      text("Collision", x - 50, y - 50, u, i);
-      i = 0;
-      u = random(0, 600);
+function SpisB() {
+  for (let i = blobdata.length - 1; i >= 0; i--) {
+    let d1 = dist(pos1.x, pos1.y, blobdata[i].x, blobdata[i].y);
+    let d2 = dist(pos2.x, pos2.y, blobdata[i].x, blobdata[i].y);
+    if (d1 < 15 || d2 < 15) {
+      blobdata.splice(i, 1); // Remove the blob if a player eats it
       console.log("GOTCHA");
-}
+    }
+  }
+
 
 // Lav z-værdi proportionel til størrelse. Hvis z er større, så udfør spis funktion.
 
