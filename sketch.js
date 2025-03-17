@@ -1,120 +1,105 @@
-let maxS = 1.7; // Maksimal hastighed
-let fri = 0.9; // Friktionsfaktor
-let pos1, vel1, acc1; // Spiller 1 - WASD-taster
-let pos2, vel2, acc2; // Spiller 2 - Arrow-taster
+let pos1, vel1, acc1; // (WASD)
+let pos2, vel2, acc2; // (Arrow)
 
-let blobdata = []; // Opbevarer blob data
+let maxS = 2.6; // maxSpeed
+let fri = 0.87; // friction
 
-let i;
-let u;
+let blobdata = []; // opbevare blobs
 
- 
+let r = 15; //radius af blob
+redPlayerPoint = 0;
+bluePlayerPoint = 0;
+
 
 
 function setup() {
-  createCanvas(600, 600); // Canvas størrelse
-  background(240); // Baggrundsfarve
+  createCanvas(600, 600);
 
+  pos1 = createVector(random(width - 570, width - 450), random(height - 570, height - 450)); // Vektor der bestemmer startposition for spiller 1
+  vel1 = createVector(0, 0);
+  acc1 = createVector(0, 0);
 
- 
-  pos1 = createVector(width / 20, height / 20); // Vektor der bestemmer position for spiller 1
-  vel1 = createVector(0, 0); // Vektor der bestemmer hastighed for spiller 1
-  acc1 = createVector(0, 0); // Vektor der bestemmer acceleration for spiller 1
-
-
-  pos2 = createVector(width - 30 , height - 30); // Vektor der bestemmer position for spiller 2
-  vel2 = createVector(0, 0); // Vektor der bestemmer hastighed for spiller 2
-  acc2 = createVector(0, 0); // Vektor der bestemmer acceleration for spiller 2
-
+  pos2 = createVector(random(width - 30, width - 150), random(height - 150, width - 30)); // Vektor der bestemmer startposition for spiller 1
+  vel2 = createVector(0, 0);
+  acc2 = createVector(0, 0);
 
   for (let i = 0; i < 60; i++) {
     let newblob = {
-      x: random(0+12,600-12),
-      y: random(0+12,600-12),
-      r: random(9, 12),
-      
-      color: {
-        r: random(0, 255), 
-        g: random(0, 255), 
-        b: random(0, 255)
-      }
-      
+      x: random(0, 600),
+      y: random(0, 600),
+      r,
     };
     blobdata.push(newblob);
-  }
-
-}
-
-function BlobG() {
-  noStroke();
-  for (let i = 0; i < blobdata.length; i++) {
-    fill(blobdata[i].color.r, blobdata[i].color.b, blobdata[i].color.g);
-    ellipse(blobdata[i].x, blobdata[i].y, blobdata[i].r);
-
   }
 }
 
 function draw() {
-  background(240);
-  BlobG(); // !!!!!!! Vis data for blob i stedet for at generere nye blobs 24/7 !!!!!!!
+  background(220);
   WASD();
   PIL();
-  SpisB();
-
+  BlobG();
 }
 
-function WASD() { // Kontrol af spiller 1
+function WASD() {
   acc1.set(0, 0);
 
-  if (keyIsDown(87)) acc1.y = -0.3;
-  if (keyIsDown(83)) acc1.y = 0.3;
-  if (keyIsDown(65)) acc1.x = -0.3;
-  if (keyIsDown(68)) acc1.x = 0.3;
+  if (keyIsDown(87)) acc1.y = -0.7;
+  if (keyIsDown(83)) acc1.y = 0.7;
+  if (keyIsDown(65)) acc1.x = -0.7;
+  if (keyIsDown(68)) acc1.x = 0.7;
 
-  vel1.add(acc1); // Tilføjer acceleration til hastighed
-  vel1.mult(fri); // Ganger hastigheden med en friktionsfaktor (fri)
-  vel1.limit(maxS); // Hastighed overstiger ikke maksimal hastighed (maxS)
-  pos1.add(vel1); // Opdaterer spiller posistion
+  vel1.add(acc1);
+  vel1.mult(fri);
+  vel1.limit((maxS));
+  pos1.add(vel1);
 
   pos1.x = constrain(pos1.x, 10, width - 10);
   pos1.y = constrain(pos1.y, 10, height - 10);
 
-  stroke(10);
-  fill(255, 0, 0); // Rød farve til spiller 1
-  ellipse(pos1.x, pos1.y, 30, 30); // Position og størrelse af spiller 1
+  fill(255, 0, 0);
+ let redsize = ellipse(pos1.x, pos1.y, r*2, r*2);
 }
 
-
-function PIL() { // Kontrol af spiller 2
+function PIL() {
   acc2.set(0, 0);
 
-  if (keyIsDown(38)) acc2.y = -0.3;
-  if (keyIsDown(40)) acc2.y = 0.3;
-  if (keyIsDown(37)) acc2.x = -0.3;
-  if (keyIsDown(39)) acc2.x = 0.3;
+  if (keyIsDown(38)) acc2.y = -0.7;
+  if (keyIsDown(40)) acc2.y = 0.7;
+  if (keyIsDown(37)) acc2.x = -0.7;
+  if (keyIsDown(39)) acc2.x = 0.7;
 
-  vel2.add(acc2); // Tilføjer acceleration til hastighed
-  vel2.mult(fri); // Ganger hastigheden med en friktionsfaktor (fri)
-  vel2.limit(maxS); // Hastighed overstiger ikke maksimal hastighed (maxS)
-  pos2.add(vel2); // Opdaterer spiller posistion
+  vel2.add(acc2);
+  vel2.mult(fri);
+  vel2.limit((maxS));
+  pos2.add(vel2);
 
   pos2.x = constrain(pos2.x, 10, width - 10);
   pos2.y = constrain(pos2.y, 10, height - 10);
 
-  fill(0, 0, 255); // Blå farve til spiller 2
-  ellipse(pos2.x, pos2.y, 30, 30); // Position og størrelse af spiller 2
+  fill(0, 0, 255);
+  let bluesize = ellipse(pos2.x, pos2.y, r*2, r*2);
 }
 
+function BlobG(bluesize,redsize) {
+  fill(0, 255, 0);
+  for (let i = blobdata.length - 1; i >= 0; i--) {
+    let blob = blobdata[i];
 
-function SpisB(){
-  if (dist(pos1.x, pos1.y,i,u) < 15)  {
-      textSize(30);
-      text("Collision", x - 50, y - 50, u, i);
-      i = 0;
-      u = random(0, 600);
-      console.log("GOTCHA");
-}
-
-// Lav z-værdi proportionel til størrelse. Hvis z er større, så udfør spis funktion.
-
+    ellipse(blob.x, blob.y, blob.r * 2);
+    if (dist(pos1.x, pos1.y, blob.x, blob.y) < r) {
+      blobdata.splice(i, 1);
+      redPlayerPoint ++
+      console.log(redPlayerPoint);
+    
+    }
+    if (dist(pos2.x, pos2.y, blob.x, blob.y) < r) {
+      blobdata.splice(i, 1);
+      bluePlayerPoint ++
+      console.log(bluePlayerPoint);
+    }
+  }
+      textSize(32);
+      fill(255,255,255);
+      text(redPlayerPoint,100,100); 
+      text(bluePlayerPoint,400,100); 
 }
