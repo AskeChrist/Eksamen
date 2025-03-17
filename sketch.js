@@ -51,12 +51,18 @@ function BlobG() {
   }
 }
 
+
+
+
 function draw() {
   background(220);
   WASD();
   PIL();
   BlobG();
 }
+
+
+
 
 function WASD() {
   acc1.set(0, 0);
@@ -120,39 +126,10 @@ function BlobG(bluesize,redsize) {
       fill(255,255,255);
       text(redPlayerPoint,100,100); 
       text(bluePlayerPoint,400,100); 
+
+      let bluesize = ellipse(pos2.x, pos2.y, r*2, r*2);
 }
 
-  fill(0, 0, 255);
-  let bluesize = ellipse(pos2.x, pos2.y, r*2, r*2);
-}
-
-function BlobG(bluesize,redsize) {
-  fill(0, 255, 0);
-  for (let i = blobdata.length - 1; i >= 0; i--) {
-    let blob = blobdata[i];
-
-    ellipse(blob.x, blob.y, blob.r * 2);
-    if (dist(pos1.x, pos1.y, blob.x, blob.y) < r) {
-      blobdata.splice(i, 1);
-      redPlayerPoint ++
-      console.log(redPlayerPoint);
-    
-    }
-    if (dist(pos2.x, pos2.y, blob.x, blob.y) < r) {
-      blobdata.splice(i, 1);
-      bluePlayerPoint ++
-      console.log(bluePlayerPoint);
-    }
-  }
-      textSize(32);
-      fill(255,255,255);
-      text(redPlayerPoint,100,100); 
-      text(bluePlayerPoint,400,100); 
-}
-
-  fill(0, 0, 255); // Blå farve til spiller 2
-  ellipse(pos2.x, pos2.y, 30, 30); // Position og størrelse af spiller 2
-}
 
 
 function SpisB() {
