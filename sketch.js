@@ -1,12 +1,11 @@
 let pos1, vel1, acc1; // (WASD)
 let pos2, vel2, acc2; // (Arrow)
 
-let maxS = 2.6; // maxSpeed
-let fri = 0.87; // friction
+<iction
 
 let blobdata = []; // opbevare blobs
 
-let r = 15; //radius af blob
+<<
 redPlayerPoint = 0;
 bluePlayerPoint = 0;
 
@@ -39,25 +38,21 @@ function draw() {
   PIL();
   BlobG();
 }
-
-function WASD() {
-  acc1.set(0, 0);
-
-  if (keyIsDown(87)) acc1.y = -0.7;
+1.y = -0.7;
   if (keyIsDown(83)) acc1.y = 0.7;
   if (keyIsDown(65)) acc1.x = -0.7;
   if (keyIsDown(68)) acc1.x = 0.7;
 
   vel1.add(acc1);
   vel1.mult(fri);
-  vel1.limit((maxS));
+  vel1.limit((maxS = 2.6/(2*sqrt(rr))*10));
   pos1.add(vel1);
 
-  pos1.x = constrain(pos1.x, 10, width - 10);
-  pos1.y = constrain(pos1.y, 10, height - 10);
+  pos1.x = constrain(pos1.x, rr, width - rr);
+  pos1.y = constrain(pos1.y, rr, height - rr);
 
   fill(255, 0, 0);
- let redsize = ellipse(pos1.x, pos1.y, r*2, r*2);
+<<
 }
 
 function PIL() {
@@ -70,40 +65,10 @@ function PIL() {
 
   vel2.add(acc2);
   vel2.mult(fri);
-  vel2.limit((maxS));
+<> main
   pos2.add(vel2);
-
-  pos2.x = constrain(pos2.x, 10, width - 10);
-  pos2.y = constrain(pos2.y, 10, height - 10);
+  pos2.x = constrain(pos2.x, rb, width - rb);
+  pos2.y = constrain(pos2.y, rb, height - rb);
 
   fill(0, 0, 255);
-  let bluesize = ellipse(pos2.x, pos2.y, r*2, r*2);
-}
-
-function BlobG(bluesize,redsize) {
-  fill(0, 255, 0);
-  for (let i = blobdata.length - 1; i >= 0; i--) {
-    let blob = blobdata[i];
-
-    ellipse(blob.x, blob.y, blob.r * 2);
-    if (dist(pos1.x, pos1.y, blob.x, blob.y) < r) {
-      blobdata.splice(i, 1);
-      redPlayerPoint ++
-      console.log(redPlayerPoint);
-      redsize 
-      
-      
-    }
-    if (dist(pos2.x, pos2.y, blob.x, blob.y) < r) {
-      blobdata.splice(i, 1);
-      bluePlayerPoint ++
-      console.log(bluePlayerPoint);
-    }
-  }
-}
-
-
-
-
-
-
+<<<<
