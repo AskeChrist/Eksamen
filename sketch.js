@@ -1,11 +1,14 @@
 let pos1, vel1, acc1; // (WASD)
 let pos2, vel2, acc2; // (Arrow)
 
-<iction
+let maxS; // maxSpeed
+let fri = 0.87; // friction
 
 let blobdata = []; // opbevare blobs
 
-<<
+let r = 15;//radius af blob
+let rr = 15;
+let rb = 15;
 redPlayerPoint = 0;
 bluePlayerPoint = 0;
 
@@ -38,7 +41,11 @@ function draw() {
   PIL();
   BlobG();
 }
-1.y = -0.7;
+
+function WASD(redPlayerPoint) {
+  acc1.set(0, 0);
+
+  if (keyIsDown(87)) acc1.y = -0.7;
   if (keyIsDown(83)) acc1.y = 0.7;
   if (keyIsDown(65)) acc1.x = -0.7;
   if (keyIsDown(68)) acc1.x = 0.7;
@@ -52,7 +59,8 @@ function draw() {
   pos1.y = constrain(pos1.y, rr, height - rr);
 
   fill(255, 0, 0);
-<<
+ let redsize = ellipse(pos1.x, pos1.y, rr*2, rr*2);
+
 }
 
 function PIL() {
@@ -65,10 +73,49 @@ function PIL() {
 
   vel2.add(acc2);
   vel2.mult(fri);
-<> main
+  vel2.limit((maxS= 2.6/(2*sqrt(rb))*10));
   pos2.add(vel2);
   pos2.x = constrain(pos2.x, rb, width - rb);
   pos2.y = constrain(pos2.y, rb, height - rb);
 
   fill(0, 0, 255);
-<<<<
+  let bluesize = ellipse(pos2.x, pos2.y, rb*2, rb*2);
+  
+}
+
+function BlobG() {
+  fill(0, 255, 0);
+  for (let i = blobdata.length - 1; i >= 0; i--) {
+    let blob = blobdata[i];
+
+    ellipse(blob.x, blob.y, blob.r * 2);
+    if (dist(pos1.x, pos1.y, blob.x, blob.y) < rr) {
+      blobdata.splice(i, 1);
+      redPlayerPoint ++
+      console.log(redPlayerPoint);
+      rr += 1
+    
+    }
+    if (dist(pos2.x, pos2.y, blob.x, blob.y) < rb) {
+      blobdata.splice(i, 1);
+      bluePlayerPoint ++
+      console.log(bluePlayerPoint);
+      rb += 1
+      
+    }
+    if(dist(pos1.x,pos1.y,pos2.x,pos2.y) < rb + rr){
+      if(rr>rb){
+        rr += rb;
+        rb=0;
+      }
+      if(rb>rr){
+        rb +=rr;
+        rr=0;
+      }
+    }
+  }
+      textSize(32);
+      fill(255,255,255);
+      text(redPlayerPoint,100,100); 
+      text(bluePlayerPoint,400,100); 
+}
