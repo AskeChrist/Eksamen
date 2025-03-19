@@ -4,11 +4,7 @@ let pos2, vel2, acc2; // (Arrow)
 let maxS = 2.6; // maxSpeed
 let fri = 0.87; // friction
 
-let blobdata = []; // Opbevarer blob data
-
-let i;
-let u;
-
+let blobdata = []; // opbevare blobs
 
 let r = 15; //radius af blob
 redPlayerPoint = 0;
@@ -29,30 +25,13 @@ function setup() {
 
   for (let i = 0; i < 60; i++) {
     let newblob = {
-      x: random(0+12,600-12),
-      y: random(0+12,600-12),
-      r: random(9, 12),
-      
-      color: {
-        r: random(0, 255), 
-        g: random(0, 255), 
-        b: random(0, 255),
-      }
+      x: random(0, 600),
+      y: random(0, 600),
+      r,
     };
     blobdata.push(newblob);
   }
 }
-
-function BlobG() {
-  noStroke();
-  for (let i = 0; i < blobdata.length; i++) {
-    fill(blobdata[i].color.r, blobdata[i].color.b, blobdata[i].color.g);
-    ellipse(blobdata[i].x, blobdata[i].y, blobdata[i].r);
-  }
-}
-
-
-
 
 function draw() {
   background(220);
@@ -60,9 +39,6 @@ function draw() {
   PIL();
   BlobG();
 }
-
-
-
 
 function WASD() {
   acc1.set(0, 0);
@@ -126,23 +102,4 @@ function BlobG(bluesize,redsize) {
       fill(255,255,255);
       text(redPlayerPoint,100,100); 
       text(bluePlayerPoint,400,100); 
-
-      let bluesize = ellipse(pos2.x, pos2.y, r*2, r*2);
-}
-
-
-
-function SpisB() {
-  for (let i = blobdata.length - 1; i >= 0; i--) {
-    let d1 = dist(pos1.x, pos1.y, blobdata[i].x, blobdata[i].y);
-    let d2 = dist(pos2.x, pos2.y, blobdata[i].x, blobdata[i].y);
-    if (d1 < 15 || d2 < 15) {
-      blobdata.splice(i, 1); // Remove the blob if a player eats it
-      console.log("GOTCHA");
-    }
-  }
-
-
-// Lav z-værdi proportionel til størrelse. Hvis z er større, så udfør spis funktion.
-
 }
