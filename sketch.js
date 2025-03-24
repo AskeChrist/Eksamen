@@ -5,9 +5,6 @@ let pos2, vel2, acc2; // Spiller 2 - Arrow-taster
 
 let blobdata = []; // Opbevarer blob data
 
-let i;
-let u;
-
 
 
 
@@ -48,15 +45,15 @@ function setup() {
 function BlobG() {
   noStroke();
   for (let i = 0; i < blobdata.length; i++) {
-    fill(blobdata[i].color.r, blobdata[i].color.b, blobdata[i].color.g);
+    fill(blobdata[i].color.r, blobdata[i].color.g, blobdata[i].color.b);
     ellipse(blobdata[i].x, blobdata[i].y, blobdata[i].r);
 
   }
 }
 
 function draw() {
-  background(240);
-  BlobG(); // !!!!!!! Vis data for blob i stedet for at generere nye blobs 24/7 !!!!!!!
+  background(240); // Baggrundsfarve
+  BlobG(); // Viser data for blob i stedet for at generere nye blobs.
   WASD();
   PIL();
   SpisB();
@@ -111,9 +108,10 @@ function SpisB() {
   for (let i = blobdata.length - 1; i >= 0; i--) {
     let d1 = dist(pos1.x, pos1.y, blobdata[i].x, blobdata[i].y);
     let d2 = dist(pos2.x, pos2.y, blobdata[i].x, blobdata[i].y);
-    if (d1 < 15 || d2 < 15) {
+    if (d1 < blobdata[i].r + 2 || d2 < blobdata[i].r + 2) {
       blobdata.splice(i, 1); // Fjern mad-cirkel, når spiller spiser den
       console.log("GOTCHA");
+    
     }
   }
 
