@@ -85,6 +85,7 @@ function WASD() { // Kontrol af spiller 1
 }
 
 
+
 function PIL() { // Kontrol af spiller 2
   acc2.set(0, 0);
 
