@@ -11,12 +11,11 @@ let win = false;
 
 function setup() {
   createCanvas(600, 600);
-startPos();
- 
+  startPos();
 }
-function startPos(){
+
+function startPos() {
   background(220);
-   // Set initial positions
   pos1 = createVector(random(30, 150), random(30, 150));
   vel1 = createVector(0, 0);
   acc1 = createVector(0, 0);
@@ -26,6 +25,7 @@ function startPos(){
   acc2 = createVector(0, 0);
 
   // Generate blobs
+  blobdata = [];
   for (let i = 0; i < 60; i++) {
     let newblob = {
       x: random(12, width - 12),
@@ -35,15 +35,7 @@ function startPos(){
     };
     blobdata.push(newblob);
   }
-  
-  
 }
-
-
-
-
-
-
 
 function draw() {
   background(220);
@@ -74,9 +66,10 @@ function WASD() {
 
   pos1.x = constrain(pos1.x, rr, width - rr);
   pos1.y = constrain(pos1.y, rr, height - rr);
-  stroke(20)
-  fill(255, 0, 0);
-  ellipse(pos1.x, pos1.y, rr * 2, rr * 2);
+
+  let angle1 = atan2(vel1.y, vel1.x);
+
+  drawPlayer(pos1.x, pos1.y, rr, color(255, 0, 0), angle1);
 }
 
 // Player 2 controls (Arrow Keys)
@@ -96,9 +89,26 @@ function PIL() {
   pos2.x = constrain(pos2.x, rb, width - rb);
   pos2.y = constrain(pos2.y, rb, height - rb);
 
-  stroke(20)
-  fill(0, 0, 255);
-  ellipse(pos2.x, pos2.y, rb * 2, rb * 2);
+  let angle2 = atan2(vel2.y, vel2.x);
+
+  drawPlayer(pos2.x, pos2.y, rb, color(0, 0, 255), angle2);
+}
+
+// Draw player with eyes
+function drawPlayer(x, y, r, col, angle) {
+  stroke(20);
+  fill(col);
+  ellipse(x, y, r * 2, r * 2);
+
+  // Eye
+  push();
+  translate(x, y);
+  rotate(angle);
+  fill(255);
+  ellipse(r / 2, 0, r * 1.2, r * 1.2);
+  fill(0);
+  ellipse(r / 2 + 3, 0, r * 0.6, r * 0.6);
+  pop();
 }
 
 // Blob rendering
@@ -115,19 +125,17 @@ function SpisB() {
   for (let i = blobdata.length - 1; i >= 0; i--) {
     if (dist(pos1.x, pos1.y, blobdata[i].x, blobdata[i].y) < rr) {
       blobdata.splice(i, 1);
-      redPlayerPoint ++ ;
-      console.log("Red Score: " + redPlayerPoint);
+      redPlayerPoint++;
       rr += 1;
     } else if (dist(pos2.x, pos2.y, blobdata[i].x, blobdata[i].y) < rb) {
       blobdata.splice(i, 1);
-      bluePlayerPoint ++;
-      console.log("Blue Score: " + bluePlayerPoint);
+      bluePlayerPoint++;
       rb += 1;
     }
   }
 
   // Check Player Collision
-  if (dist(pos1.x, pos1.y, pos2.x, pos2.y) < rb- sqrt(rr) + rr - sqrt(rb)) {
+  if (dist(pos1.x, pos1.y, pos2.x, pos2.y) < rb - sqrt(rr) + rr - sqrt(rb)) {
     if (rr > rb) {
       win = "Red Wins!";
     } else if (rb > rr) {
@@ -136,7 +144,7 @@ function SpisB() {
   }
 
   // Display scores
-  stroke(20)
+  stroke(20);
   textSize(32);
   fill(255, 0, 0);
   text(redPlayerPoint, 100, 100);
@@ -155,15 +163,15 @@ function displayWinner() {
   let button = createButton("Restart");
   button.mousePressed(startGame);
 }
-function startGame(){
+
+function startGame() {
   startPos();
   redPlayerPoint = 0;
   bluePlayerPoint = 0;
   win = false;
-  rr = 15; // radius of red player
+  rr = 15; // Reset radius of red player
   rb = 15;
-  draw();
+  loop();
 }
-
 
 
