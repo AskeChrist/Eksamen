@@ -1,121 +1,172 @@
-let maxS = 1.7; // Maksimal hastighed
-let fri = 0.9; // Friktionsfaktor
-let pos1, vel1, acc1; // Spiller 1 - WASD-taster
-let pos2, vel2, acc2; // Spiller 2 - Arrow-taster
-
-let blobdata = []; // Opbevarer blob data
-
-
-
+let pos1, vel1, acc1; // (WASD)
+let pos2, vel2, acc2; // (Arrow)
+let maxS; // maxSpeed
+let fri = 0.87; // friction
+let blobdata = []; // store blobs
+let rr = 15; // radius of red player
+let rb = 15; // radius of blue player
+let redPlayerPoint = 0;
+let bluePlayerPoint = 0;
+let win = false;
 
 function setup() {
-  createCanvas(600, 600); // Canvas størrelse
-  background(240); // Baggrundsfarve
-
-
+  createCanvas(600, 600);
+  startPos();
  
-  pos1 = createVector(width / 20, height / 20); // Vektor der bestemmer position for spiller 1
-  vel1 = createVector(0, 0); // Vektor der bestemmer hastighed for spiller 1
-  acc1 = createVector(0, 0); // Vektor der bestemmer acceleration for spiller 1
+}
+function startPos(){
+  background(220);
+   // Set initial positions
+  pos1 = createVector(random(30, 150), random(30, 150));
+  vel1 = createVector(0, 0);
+  acc1 = createVector(0, 0);
 
+  pos2 = createVector(random(width - 150, width - 30), random(height - 150, height - 30));
+  vel2 = createVector(0, 0);
+  acc2 = createVector(0, 0);
 
-  pos2 = createVector(width - 30 , height - 30); // Vektor der bestemmer position for spiller 2
-  vel2 = createVector(0, 0); // Vektor der bestemmer hastighed for spiller 2
-  acc2 = createVector(0, 0); // Vektor der bestemmer acceleration for spiller 2
-
-
+  // Generate blobs
   for (let i = 0; i < 60; i++) {
     let newblob = {
-      x: random(0+12,600-12),
-      y: random(0+12,600-12),
-      r: random(9, 12),
-      
-      color: {
-        r: random(0, 255), 
-        g: random(0, 255), 
-        b: random(0, 255)
-      }
-      
+      x: random(12, width - 12),
+      y: random(12, height - 12),
+      r: Math.floor(random(9, 12)),
+      color: { r: random(0, 255), g: random(0, 255), b: random(0, 255) }
     };
     blobdata.push(newblob);
-  }
-
+  }  
 }
 
+
+
+function draw() {
+  background(220);
+
+  if (!win) {
+    BlobG();
+    SpisB();
+
+    if (rr < rb) { // Z-index
+      WASD();
+      PIL();
+    } else {
+      PIL();
+      WASD();
+    }
+
+    Score();
+  } else {
+    displayWinner();
+  }
+}
+
+
+
+// Player 1 controls (WASD)
+function WASD() {
+  acc1.set(0, 0);
+
+  if (keyIsDown(87)) acc1.y = -0.7;
+  if (keyIsDown(83)) acc1.y = 0.7;
+  if (keyIsDown(65)) acc1.x = -0.7;
+  if (keyIsDown(68)) acc1.x = 0.7;
+
+  vel1.add(acc1);
+  vel1.mult(fri);
+  vel1.limit((2.6 / (2 * sqrt(rr))) * 10);
+  pos1.add(vel1);
+
+  pos1.x = constrain(pos1.x, rr, width - rr);
+  pos1.y = constrain(pos1.y, rr, height - rr);
+  stroke(20)
+  fill(255, 0, 0);
+  ellipse(pos1.x, pos1.y, rr * 2, rr * 2);
+}
+
+// Player 2 controls (Arrow Keys)
+function PIL() {
+  acc2.set(0, 0);
+
+  if (keyIsDown(UP_ARROW)) acc2.y = -0.7;
+  if (keyIsDown(DOWN_ARROW)) acc2.y = 0.7;
+  if (keyIsDown(LEFT_ARROW)) acc2.x = -0.7;
+  if (keyIsDown(RIGHT_ARROW)) acc2.x = 0.7;
+
+  vel2.add(acc2);
+  vel2.mult(fri);
+  vel2.limit((2.6 / (2 * sqrt(rb))) * 10);
+  pos2.add(vel2);
+
+  pos2.x = constrain(pos2.x, rb, width - rb);
+  pos2.y = constrain(pos2.y, rb, height - rb);
+
+  stroke(20)
+  fill(0, 0, 255);
+  ellipse(pos2.x, pos2.y, rb * 2, rb * 2);
+}
+
+// Blob rendering
 function BlobG() {
   noStroke();
   for (let i = 0; i < blobdata.length; i++) {
     fill(blobdata[i].color.r, blobdata[i].color.g, blobdata[i].color.b);
-    ellipse(blobdata[i].x, blobdata[i].y, blobdata[i].r);
-
+    ellipse(blobdata[i].x, blobdata[i].y, blobdata[i].r * 2);
   }
 }
 
-function draw() {
-  background(240); // Baggrundsfarve
-  BlobG(); // Viser data for blob i stedet for at generere nye blobs.
-  WASD();
-  PIL();
-  SpisB();
-
-}
-
-function WASD() { // Kontrol af spiller 1
-  acc1.set(0, 0);
-
-  if (keyIsDown(87)) acc1.y = -0.3;
-  if (keyIsDown(83)) acc1.y = 0.3;
-  if (keyIsDown(65)) acc1.x = -0.3;
-  if (keyIsDown(68)) acc1.x = 0.3;
-
-  vel1.add(acc1); // Tilføjer acceleration til hastighed
-  vel1.mult(fri); // Ganger hastigheden med en friktionsfaktor (fri)
-  vel1.limit(maxS); // Hastighed overstiger ikke maksimal hastighed (maxS)
-  pos1.add(vel1); // Opdaterer spiller posistion
-
-  pos1.x = constrain(pos1.x, 10, width - 10);
-  pos1.y = constrain(pos1.y, 10, height - 10);
-
-  stroke(10);
-  fill(255, 0, 0); // Rød farve til spiller 1
-  ellipse(pos1.x, pos1.y, 30, 30); // Position og størrelse af spiller 1
-}
-
-
-
-function PIL() { // Kontrol af spiller 2
-  acc2.set(0, 0);
-
-  if (keyIsDown(38)) acc2.y = -0.3;
-  if (keyIsDown(40)) acc2.y = 0.3;
-  if (keyIsDown(37)) acc2.x = -0.3;
-  if (keyIsDown(39)) acc2.x = 0.3;
-
-  vel2.add(acc2); // Tilføjer acceleration til hastighed
-  vel2.mult(fri); // Ganger hastigheden med en friktionsfaktor (fri)
-  vel2.limit(maxS); // Hastighed overstiger ikke maksimal hastighed (maxS)
-  pos2.add(vel2); // Opdaterer spiller posistion
-
-  pos2.x = constrain(pos2.x, 10, width - 10);
-  pos2.y = constrain(pos2.y, 10, height - 10);
-
-  fill(0, 0, 255); // Blå farve til spiller 2
-  ellipse(pos2.x, pos2.y, 30, 30); // Position og størrelse af spiller 2
-}
-
-
+// Collision Detection & Score Update
 function SpisB() {
   for (let i = blobdata.length - 1; i >= 0; i--) {
-    let d1 = dist(pos1.x, pos1.y, blobdata[i].x, blobdata[i].y);
-    let d2 = dist(pos2.x, pos2.y, blobdata[i].x, blobdata[i].y);
-    if (d1 < blobdata[i].r + 2 || d2 < blobdata[i].r + 2) {
-      blobdata.splice(i, 1); // Fjern mad-cirkel, når spiller spiser den
-      console.log("GOTCHA");
-    
+    if (dist(pos1.x, pos1.y, blobdata[i].x, blobdata[i].y) < Math.abs(rr - blobdata[i].r / 2)) {
+      blobdata.splice(i, 1);
+      redPlayerPoint ++ ;
+      console.log("Red Score: " + redPlayerPoint);
+      rr += 1;
+    } else if (dist(pos2.x, pos2.y, blobdata[i].x, blobdata[i].y) < Math.abs(rb - blobdata[i].r / 2)) {
+      blobdata.splice(i, 1);
+      bluePlayerPoint ++;
+      console.log("Blue Score: " + bluePlayerPoint);
+      rb += 1;
     }
   }
 
+  // Check Player Collision
+  if (dist(pos1.x, pos1.y, pos2.x, pos2.y) < Math.abs(rb - rr)) {
+    if (rr > rb) {
+      win = "Red Wins!";
+    } else if (rb > rr) {
+      win = "Blue Wins!";
+    }
+  }
 
-// Lav z-værdi proportionel til størrelse. Hvis z er større, så udfør spis funktion.
+}
 
+function Score() {
+  stroke(20)
+  textSize(32);
+  fill(255, 0, 0);
+  text(redPlayerPoint, 100, 100);
+  fill(0, 0, 255);
+  text(bluePlayerPoint, 400, 100);
+}
+
+// Display winner
+function displayWinner() {
+  background(50);
+  fill(255);
+  textSize(50);
+  textAlign(CENTER, CENTER);
+  text(win, width / 2, height / 2);
+  noLoop(); // Stop the game
+  let button = createButton("Restart");
+  button.mousePressed(startGame);
+}
+function startGame(){
+  startPos();
+  redPlayerPoint = 0;
+  bluePlayerPoint = 0;
+  win = false;
+  rr = 15; // radius of red player
+  rb = 15;
+  loop();
 }
