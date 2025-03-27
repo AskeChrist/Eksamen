@@ -11,7 +11,7 @@ let win = false;
 
 function setup() {
   createCanvas(600, 600);
-startPos();
+  startPos();
  
 }
 function startPos(){
@@ -34,14 +34,8 @@ function startPos(){
       color: { r: random(0, 255), g: random(0, 255), b: random(0, 255) }
     };
     blobdata.push(newblob);
-  }
-  
-  
+  }  
 }
-
-
-
-
 
 
 
@@ -49,14 +43,24 @@ function draw() {
   background(220);
 
   if (!win) {
-    WASD();
-    PIL();
     BlobG();
     SpisB();
+
+    if (rr < rb) { // Z-index
+      WASD();
+      PIL();
+    } else {
+      PIL();
+      WASD();
+    }
+
+    Score();
   } else {
     displayWinner();
   }
 }
+
+
 
 // Player 1 controls (WASD)
 function WASD() {
@@ -113,12 +117,12 @@ function BlobG() {
 // Collision Detection & Score Update
 function SpisB() {
   for (let i = blobdata.length - 1; i >= 0; i--) {
-    if (dist(pos1.x, pos1.y, blobdata[i].x, blobdata[i].y) < rr) {
+    if (dist(pos1.x, pos1.y, blobdata[i].x, blobdata[i].y) < Math.abs(rr - blobdata[i].r / 2)) {
       blobdata.splice(i, 1);
       redPlayerPoint ++ ;
       console.log("Red Score: " + redPlayerPoint);
       rr += 1;
-    } else if (dist(pos2.x, pos2.y, blobdata[i].x, blobdata[i].y) < rb) {
+    } else if (dist(pos2.x, pos2.y, blobdata[i].x, blobdata[i].y) < Math.abs(rb - blobdata[i].r / 2)) {
       blobdata.splice(i, 1);
       bluePlayerPoint ++;
       console.log("Blue Score: " + bluePlayerPoint);
@@ -127,7 +131,7 @@ function SpisB() {
   }
 
   // Check Player Collision
-  if (dist(pos1.x, pos1.y, pos2.x, pos2.y) < rb- sqrt(rr) + rr - sqrt(rb)) {
+  if (dist(pos1.x, pos1.y, pos2.x, pos2.y) < Math.abs(rb - rr)) {
     if (rr > rb) {
       win = "Red Wins!";
     } else if (rb > rr) {
@@ -135,7 +139,9 @@ function SpisB() {
     }
   }
 
-  // Display scores
+}
+
+function Score() {
   stroke(20)
   textSize(32);
   fill(255, 0, 0);
@@ -162,7 +168,7 @@ function startGame(){
   win = false;
   rr = 15; // radius of red player
   rb = 15;
-  draw();
+  loop();
 }
 
 
