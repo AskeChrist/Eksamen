@@ -10,6 +10,12 @@ let bluePlayerPoint = 0;
 let win = false;
 let button;
 
+function preload() {
+  lyd_spisB = loadSound("lyd_spisB.mp3");
+  lyd_displayWinner = loadSound("lyd_displayWinner.mp3");
+  lyd_startGame = loadSound("lyd_startGame.mp3");
+}
+
 function setup() {
   createCanvas(600, 600);
   startPos();
@@ -54,8 +60,6 @@ function draw() {
       PIL();
       WASD();
     }
-
-    Score();
   } else {
     displayWinner();
   }
@@ -131,15 +135,21 @@ function SpisB() {
       blobdata.splice(i, 1);
       redPlayerPoint++;
       rr += 1;
+      lyd_spisB.setVolume(0.3); // Sænk lydstyrken
+      lyd_spisB.play(); // Spil spis-lyd
     } else if (dist(pos2.x, pos2.y, blobdata[i].x, blobdata[i].y) < Math.abs(rb - blobdata[i].r / 2) / 1.02) {
       blobdata.splice(i, 1);
       bluePlayerPoint++;
       rb += 1;
+      lyd_spisB.setVolume(0.3); // Sænk lydstyrken
+      lyd_spisB.play(); // Spil spis-lyd
     }
   }
 
   // Check Player Collision
   if (dist(pos1.x, pos1.y, pos2.x, pos2.y) < Math.abs((rb - rr)/0.85)) {
+    lyd_displayWinner.setVolume(0.1); // Sænk lydstyrken
+    lyd_displayWinner.play(); // Spil resultat-lyd
     if (rr > rb) {
       win = "Red wins!";
     } else if (rb > rr) {
@@ -147,15 +157,6 @@ function SpisB() {
     }
   }
 
-}
-
-function Score() {
-  stroke(20)
-  textSize(32);
-  fill(255, 0, 0);
-  text(redPlayerPoint, width / 2 - 40, 100);
-  fill(0, 0, 255);
-  redPointText = text(bluePlayerPoint, width / 2 + 40, 100);
 }
 
 // Display winner
@@ -173,6 +174,8 @@ function displayWinner() {
 }
 
 function startGame() {
+  lyd_startGame.setVolume(0.3); // Sænk lydstyrken
+  lyd_startGame.play(); // Spil start-lyd
   startPos();
   redPlayerPoint = 0;
   bluePlayerPoint = 0;
