@@ -133,10 +133,10 @@ function SpisB() {
   for (let i = blobdata.length - 1; i >= 0; i--) {
     if (dist(pos1.x, pos1.y, blobdata[i].x, blobdata[i].y) < Math.abs(rr - blobdata[i].r / 2) / 1.02) {
       blobdata.splice(i, 1);
-      redPlayerPoint++;
-      rr += 1;
       lyd_spisB.setVolume(0.3); // Sænk lydstyrken
       lyd_spisB.play(); // Spil spis-lyd
+      redPlayerPoint++;
+      rr += 1;
     } else if (dist(pos2.x, pos2.y, blobdata[i].x, blobdata[i].y) < Math.abs(rb - blobdata[i].r / 2) / 1.02) {
       blobdata.splice(i, 1);
       bluePlayerPoint++;
