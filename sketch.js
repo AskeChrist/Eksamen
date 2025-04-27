@@ -1,19 +1,24 @@
 let pos1, vel1, acc1; // (WASD)
 let pos2, vel2, acc2; // (Arrow)
-let maxS; // maxSpeed
+let maxS = 2.6; // maxSpeed
 let fri = 0.87; // friction
-let blobdata = []; // store blobs
-let rr = 15; // radius of red player
-let rb = 15; // radius of blue player
-let redPlayerPoint = 0;
+let blobdata = []; // array 
+let radiusr = 15; // radius af red player
+let radiusb = 15; // radius af blue player
+let redPlayerPoint = 0; //
 let bluePlayerPoint = 0;
 let win = false;
+let button;
+
+function preload() {
+ lyd_spisB = loadSound("lyd_spisB.mp3");
+ lyd_displayWinner = loadSound("lyd_displayWinner.mp3");
+ lyd_startGame = loadSound("lyd_startGame.mp3");
+}
 
 function setup() {
   createCanvas(600, 600);
   startPos();
-  startPos();
- 
 }
 
 function startPos() {
@@ -32,7 +37,7 @@ function startPos() {
     let newblob = {
       x: random(12, width - 12),
       y: random(12, height - 12),
-      r: Math.floor(random(9, 12)),
+      r: Math.floor(random(7, 10)),
       color: { r: random(0, 255), g: random(0, 255), b: random(0, 255) }
     };
     blobdata.push(newblob);
@@ -48,42 +53,49 @@ function draw() {
     BlobG();
     SpisB();
 
-    if (rr < rb) { // Z-index
+    if (radiusr < radiusb) { // Z-index
       WASD();
       PIL();
     } else {
       PIL();
       WASD();
     }
-
-    Score();
   } else {
     displayWinner();
   }
 }
 
+// Draw player
+function drawPlayer(x, y, r, col, points) {
+  stroke(20);
+  fill(col);
+  ellipse(x, y, r * 2, r * 2);
 
+  // Display points inside the blob
+  fill(255); // White text for visibility
+  textAlign(CENTER, CENTER);
+  textSize(16);
+  text(points, x, y);
+}
 
 // Player 1 controls (WASD)
 function WASD() {
   acc1.set(0, 0);
 
-  if (keyIsDown(87)) acc1.y = -0.7;
-  if (keyIsDown(83)) acc1.y = 0.7;
-  if (keyIsDown(65)) acc1.x = -0.7;
-  if (keyIsDown(68)) acc1.x = 0.7;
+  if (keyIsDown(87)) acc1.y = -0.7; // W key
+  if (keyIsDown(83)) acc1.y = 0.7;  // S key
+  if (keyIsDown(65)) acc1.x = -0.7; // A key
+  if (keyIsDown(68)) acc1.x = 0.7;  // D key
 
   vel1.add(acc1);
   vel1.mult(fri);
-  vel1.limit((2.6 / (2 * sqrt(rr))) * 10);
+  vel1.limit((maxS / (2 * sqrt(radiusr))) * 10);
   pos1.add(vel1);
 
-  pos1.x = constrain(pos1.x, rr, width - rr);
-  pos1.y = constrain(pos1.y, rr, height - rr);
+  pos1.x = constrain(pos1.x, radiusr, width - radiusr);
+  pos1.y = constrain(pos1.y, radiusr, height - radiusr);
 
-  let angle1 = atan2(vel1.y, vel1.x);
-
-  drawPlayer(pos1.x, pos1.y, rr, color(255, 0, 0), angle1);
+  drawPlayer(pos1.x, pos1.y, radiusr, color(255, 0, 0), redPlayerPoint);
 }
 
 // Player 2 controls (Arrow Keys)
@@ -97,33 +109,15 @@ function PIL() {
 
   vel2.add(acc2);
   vel2.mult(fri);
-  vel2.limit((2.6 / (2 * sqrt(rb))) * 10);
+  vel2.limit((2.6 / (2 * sqrt(radiusb))) * 10);
   pos2.add(vel2);
 
-  pos2.x = constrain(pos2.x, rb, width - rb);
-  pos2.y = constrain(pos2.y, rb, height - rb);
+  pos2.x = constrain(pos2.x, radiusb, width - radiusb);
+  pos2.y = constrain(pos2.y, radiusb, height - radiusb);
 
-  let angle2 = atan2(vel2.y, vel2.x);
-
-  drawPlayer(pos2.x, pos2.y, rb, color(0, 0, 255), angle2);
+  drawPlayer(pos2.x, pos2.y, radiusb, color(0, 0, 255), bluePlayerPoint);
 }
 
-// Draw player with eyes
-function drawPlayer(x, y, r, col, angle) {
-  stroke(20);
-  fill(col);
-  ellipse(x, y, r * 2, r * 2);
-
-  // Eye
-  push();
-  translate(x, y);
-  rotate(angle);
-  fill(255);
-  ellipse(r / 2, 0, r * 1.2, r * 1.2);
-  fill(0);
-  ellipse(r / 2 + 3, 0, r * 0.6, r * 0.6);
-  pop();
-}
 
 // Blob rendering
 function BlobG() {
@@ -137,35 +131,32 @@ function BlobG() {
 // Collision Detection & Score Update
 function SpisB() {
   for (let i = blobdata.length - 1; i >= 0; i--) {
-    if (dist(pos1.x, pos1.y, blobdata[i].x, blobdata[i].y) < Math.abs(rr - blobdata[i].r / 2)) {
+    if (dist(pos1.x, pos1.y, blobdata[i].x, blobdata[i].y) < Math.abs(radiusr - blobdata[i].r / 2) / 1.02) {
       blobdata.splice(i, 1);
+      lyd_spisB.setVolume(0.3); // Sænk lydstyrken
+      lyd_spisB.play(); // Spil spis-lyd
       redPlayerPoint++;
-      rr += 1;
-    } else if (dist(pos2.x, pos2.y, blobdata[i].x, blobdata[i].y) < Math.abs(rb - blobdata[i].r / 2)) {
+      radiusr += 1;
+    } else if (dist(pos2.x, pos2.y, blobdata[i].x, blobdata[i].y) < Math.abs(radiusb - blobdata[i].r / 2) / 1.02) {
       blobdata.splice(i, 1);
       bluePlayerPoint++;
-      rb += 1;
+      radiusb += 1;
+      lyd_spisB.setVolume(0.3); // Sænk lydstyrken
+      lyd_spisB.play(); // Spil spis-lyd
     }
   }
 
   // Check Player Collision
-  if (dist(pos1.x, pos1.y, pos2.x, pos2.y) < Math.abs(rb - rr)) {
-    if (rr > rb) {
-      win = "Red Wins!";
-    } else if (rb > rr) {
-      win = "Blue Wins!";
+  if (dist(pos1.x, pos1.y, pos2.x, pos2.y) < Math.abs((radiusb - radiusr)/0.85)) {
+    lyd_displayWinner.setVolume(0.1); // Sænk lydstyrken
+    lyd_displayWinner.play(); // Spil resultat-lyd
+    if (radiusr > radiusb) {
+      win = "Red wins!";
+    } else if (radiusb > radiusr) {
+      win = "Blue wins!";
     }
   }
 
-}
-
-function Score() {
-  stroke(20)
-  textSize(32);
-  fill(255, 0, 0);
-  text(redPlayerPoint, 100, 100);
-  fill(0, 0, 255);
-  text(bluePlayerPoint, 400, 100);
 }
 
 // Display winner
@@ -175,20 +166,23 @@ function displayWinner() {
   textSize(50);
   textAlign(CENTER, CENTER);
   text(win, width / 2, height / 2);
-  noLoop(); // Stop the game
-  let button = createButton("Restart");
+  noLoop(); // Stop spillet fra at loope midlertidigt
+  button = createButton("Play again");
+  button.size(100, 30); // Størrelse på knappen
+  button.position(width / 2 - 50, height / 2 + 50); // Placer knappen i midten, lige under teksten
   button.mousePressed(startGame);
+  
 }
 
 function startGame() {
+  lyd_startGame.setVolume(0.3); // Sænk lydstyrken
+  lyd_startGame.play(); // Spil start-lyd
   startPos();
   redPlayerPoint = 0;
   bluePlayerPoint = 0;
-  win = false;
-  rr = 15; // Reset radius of red player
-  rb = 15;
-  loop();
-  loop();
+  button.hide(); // Fjern knappen
+  win = false; // Reset så ingen har vundet
+  radiusr = 15; // Reset radius af rød spiller
+  radiusb = 15; // Reset radius af blå spiller
+  loop(); // Start spillets loop igen
 }
-
-
