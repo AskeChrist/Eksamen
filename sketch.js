@@ -17,7 +17,7 @@ function preload() {                                      // Indlæs lydfiler ti
 }
 
 function setup() {        // Setup-funktion til at initialisere spillet
-  createCanvas(600, 600); // Størrelsen af spillerfladen
+  createCanvas(530, 530); // Størrelsen af spillerfladen
   StartPos();             // Placér spillerne og blobs på skærmen 
 }
 
@@ -167,9 +167,9 @@ function SpisSpillere() {   // Tjekker om spillerne spiser hinanden
 function ErIHjørne(x, y, r) {
   return (
     dist(x, y, 0, 0) <= r ||       // Top-left corner
-    dist(x, y, 600, 0) <= r ||    // Top-right corner
-    dist(x, y, 0, 600) <= r ||    // Bottom-left corner
-    dist(x, y, 600, 600) <= r     // Bottom-right corner
+    dist(x, y, 530, 0) <= r ||    // Top-right corner
+    dist(x, y, 0, 530) <= r ||    // Bottom-left corner
+    dist(x, y, 530, 530) <= r     // Bottom-right corner
   );
 }
 
