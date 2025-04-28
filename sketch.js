@@ -166,10 +166,10 @@ function SpisSpillere() {   // Tjekker om spillerne spiser hinanden
 
 function ErIHjørne(x, y, r) {
   return (
-    dist(x, y, 0, 0) <= r ||       // Top-left corner
-    dist(x, y, 530, 0) <= r ||    // Top-right corner
-    dist(x, y, 0, 530) <= r ||    // Bottom-left corner
-    dist(x, y, 530, 530) <= r     // Bottom-right corner
+    dist(x, y, 0, 0) <= sqrt(2)*r ||       // Top-left corner
+    dist(x, y, 530, 0) <= sqrt(2)*r ||    // Top-right corner
+    dist(x, y, 0, 530) <= sqrt(2)*r ||    // Bottom-left corner
+    dist(x, y, 530, 530) <= sqrt(2)*r     // Bottom-right corner
   );
 }
 
