@@ -33,7 +33,7 @@ function StartPos() {                                       // Generér attribut
 
   blobdata = [];                    // Generér et tomt array til at opbevare blobs
   for (let i = 0; i < 59; i++) {    // Generér 59 blobs med tilfældige positioner og farver
-    let newblob = {
+    let newblob = {                 // JSON-objekt
       x: random(12, width - 12),    // Random position på x-aksen, men 12 pixels fra kanten
       y: random(12, height - 12),   // Random position på y-aksen, men 12 pixels fra kanten
       r: Math.floor(random(7, 10)), // Random heltal radius mellem 7 og 10 pixels
@@ -80,8 +80,8 @@ function RødWASD() {  // RØD SPILLERS CONTROLS vha. WASD-tasterne
   accRød.set(0, 0);   // Nulstil accelerationen for rød spiller
 
   if (keyIsDown(87)) accRød.y = -0.7; // W-tast
-  if (keyIsDown(83)) accRød.y = 0.7;  // S-tast
   if (keyIsDown(65)) accRød.x = -0.7; // A-tast
+  if (keyIsDown(83)) accRød.y = 0.7;  // S-tast
   if (keyIsDown(68)) accRød.x = 0.7;  // D-tast
 
   velRød.add(accRød);                                   // Tilføj rød spillers acceleration til hastighed
@@ -100,8 +100,8 @@ function BlåPILE() {  // BLÅ SPILLERS CONTROLS vha. piletasterne
   accBlå.set(0, 0);   // Nulstil accelerationen for blå spiller
 
   if (keyIsDown(UP_ARROW)) accBlå.y = -0.7;   // Pil op
+  if (keyIsDown(LEFT_ARROW)) accBlå.x = -0.7; // Pil venstre  
   if (keyIsDown(DOWN_ARROW)) accBlå.y = 0.7;  // Pil ned
-  if (keyIsDown(LEFT_ARROW)) accBlå.x = -0.7; // Pil venstre
   if (keyIsDown(RIGHT_ARROW)) accBlå.x = 0.7; // Pil højre
 
   velBlå.add(accBlå);                                   // Tilføj blå spillers acceleration til hastighed
@@ -152,24 +152,25 @@ function SpisSpillere() {   // Tjekker om spillerne spiser hinanden
   }
   
   if (radiusRød > 20 && radiusBlå > 20) { // Hvis begge spillerne er større end 20, gør det lettere at spise hinanden
-    if (dist(posRød.x, posRød.y, posBlå.x, posBlå.y) < Math.abs((radiusBlå - radiusRød)/0.20)) {  // Hvis de er tættere end 0.2x radius-forskellen
+    if (dist(posRød.x, posRød.y, posBlå.x, posBlå.y) < Math.abs((radiusBlå - radiusRød)/0.2)) {  // Hvis de er tættere end 0.2x radius-forskellen
       CheckWinner(); // Så opsluges den mindre spiller, og der tjekkes hvem der er størst, og vinderen afgøres
     }
   }
 
-  if (ErIHjørne(posRød.x, posRød.y, radiusRød)) {
-    if (ErIHjørne(posBlå.x, posBlå.y, radiusBlå)) { // Hvis blå og rød er i hjørnet
-      CheckWinner(); // Så opsluges den mindre spiller, og der tjekkes hvem der er størst, og vinderen afgøres
+ 
+  if (ErIHjørne(posRød.x, posRød.y, radiusRød) && ErIHjørne(posBlå.x, posBlå.y, radiusBlå)) { // Er spillerne i hjørnet?
+    if (dist(posRød.x, posRød.y, posBlå.x, posBlå.y) < radiusRød + radiusBlå) { // Er spillerne i samme hjørne?
+      CheckWinner(); // Så opsluges den mindre spiller, og vinderen afgøres.
     }
   }
 } // Hverken blå eller rød er i hjørnet - vend tilbage til draw
 
 function ErIHjørne(x, y, r) {
-  return (
-    dist(x, y, 0, 0) <= sqrt(2)*r ||       // Top-left corner
-    dist(x, y, 530, 0) <= sqrt(2)*r ||    // Top-right corner
-    dist(x, y, 0, 530) <= sqrt(2)*r ||    // Bottom-left corner
-    dist(x, y, 530, 530) <= sqrt(2)*r     // Bottom-right corner
+  return (                                // Return returner op til funktionskalderen
+    dist(x, y, 0, 0) == sqrt(2)*r ||      // Top-left corner
+    dist(x, y, 530, 0) == sqrt(2)*r ||    // Top-right corner
+    dist(x, y, 0, 530) == sqrt(2)*r ||    // Bottom-left corner
+    dist(x, y, 530, 530) == sqrt(2)*r     // Bottom-right corner
   );
 }
 
@@ -201,15 +202,13 @@ function DisplayWinner() {          // Viser vinderen på skærmen
 
 function StartSpil() {  // Funktion til at starte spillet igen
   genstartKnap.hide();  // Fjern genstart-knappen
-
   lyd_startGame.setVolume(0.3); // Sænk lydstyrken
   lyd_startGame.play(); // Spil start-lyd
-
   pointRød = 0;         // Reset point for rød spiller
   pointBlå = 0;         // Reset point for blå spiller
-  win = false;          // Reset så ingen har vundet
   radiusRød = 15;       // Reset radius af rød spiller
   radiusBlå = 15;       // Reset radius af blå spiller
+  win = false;          // Reset så ingen har vundet
   StartPos();           // Start spillet igen
   loop();               // Start spillets loop igen
 }
